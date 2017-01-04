@@ -537,6 +537,10 @@ NSString * const MTLJSONAdapterThrownExceptionErrorKey = @"MTLJSONAdapterThrownE
 }
 
 + (NSValueTransformer<MTLTransformerErrorHandling> *)arrayTransformerWithModelClass:(Class)modelClass {
+	return [self arrayTransformerWithModelClass:modelClass filterInvalidEntries:NO];
+}
+
++ (NSValueTransformer<MTLTransformerErrorHandling> *)arrayTransformerWithModelClass:(Class)modelClass filterInvalidEntries:(BOOL)filterInvalidEntries {
 	id<MTLTransformerErrorHandling> dictionaryTransformer = [self dictionaryTransformerWithModelClass:modelClass];
 	
 	return [MTLValueTransformer
@@ -580,7 +584,13 @@ NSString * const MTLJSONAdapterThrownExceptionErrorKey = @"MTLJSONAdapterThrownE
 				
 				id model = [dictionaryTransformer transformedValue:JSONDictionary success:success error:error];
 				
-				if (*success == NO) return nil;
+				if (*success == NO) {
+					if (filterInvalidEntries) {
+						continue;
+					} else {
+						return nil;
+					}
+				}
 				
 				if (model == nil) continue;
 				
@@ -629,8 +639,14 @@ NSString * const MTLJSONAdapterThrownExceptionErrorKey = @"MTLJSONAdapterThrownE
 				
 				NSDictionary *dict = [dictionaryTransformer reverseTransformedValue:model success:success error:error];
 				
-				if (*success == NO) return nil;
-				
+				if (*success == NO) {
+					if (filterInvalidEntries) {
+						continue;
+					} else {
+						return nil;
+					}
+				}
+
 				if (dict == nil) continue;
 				
 				[dictionaries addObject:dict];
