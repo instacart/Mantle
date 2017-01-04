@@ -254,6 +254,22 @@ extern NSString * const MTLJSONAdapterThrownExceptionErrorKey;
 ///              dictionary. This class must conform to <MTLJSONSerializing>.
 ///              This argument must not be nil.
 ///
+/// filterInvalidEntries - If true, entries failing to validate will not be
+///                        included in the array. Otherwise, the transformer
+///                        fails upon recieving a bad entry.
+///
+/// Returns a reversible transformer which uses the class of the receiver for
+/// transforming array elements back and forth.
++ (NSValueTransformer<MTLTransformerErrorHandling> *)arrayTransformerWithModelClass:(Class)modelClass filterInvalidEntries:(BOOL)filterInvalidEntries;
+
+/// Creates a reversible transformer to convert an array of JSON dictionaries
+/// into an array of MTLModel objects, and vice-versa. Invalid entries will
+/// cause the transformer to fail.
+///
+/// modelClass - The MTLModel subclass to attempt to parse from each JSON
+///              dictionary. This class must conform to <MTLJSONSerializing>.
+///              This argument must not be nil.
+///
 /// Returns a reversible transformer which uses the class of the receiver for
 /// transforming array elements back and forth.
 + (NSValueTransformer<MTLTransformerErrorHandling> *)arrayTransformerWithModelClass:(Class)modelClass;
